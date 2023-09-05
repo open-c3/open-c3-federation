@@ -12,7 +12,4 @@ RUN pip install pipenv
 
 RUN pipenv install --deploy --ignore-pipfile
 
-EXPOSE 5000
-
-CMD ["pipenv", "run", "gunicorn", "run:app", "-w", "5", "-b", "0.0.0.0:5000"]
-
+ENTRYPOINT ["/app/entrypoint.sh"]
