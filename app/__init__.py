@@ -1,12 +1,17 @@
+#!/usr/bin/env /usr/local/bin/python3
+# -*- coding: utf-8 -*-
+
 import logging.config
 from os import environ
 
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 
 from .config import app_config, data_config
 from .core.api import cache
 from .core.connector_views import connector_view
+from .core.job_views import job_view
 from .core.other_views import other_view
 
 
@@ -16,9 +21,11 @@ def create_app():
     APPLICATION_ENV = get_environment()
     logging.config.dictConfig(app_config[APPLICATION_ENV].LOGGING)
     app = Flask(app_config[APPLICATION_ENV].APP_NAME)
+    CORS(app)
     app.config.from_object(app_config[APPLICATION_ENV])
 
     app.register_blueprint(connector_view, url_prefix="/api/connector")
+    app.register_blueprint(job_view, url_prefix="/api/job")
     app.register_blueprint(other_view, url_prefix="/api/other")
 
     return app
