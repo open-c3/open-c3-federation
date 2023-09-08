@@ -1,4 +1,4 @@
-#!/usr/bin/env /data/Software/mydan/python3/bin/python3
+#!/usr/bin/env /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
 import json
