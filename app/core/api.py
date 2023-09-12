@@ -7,6 +7,7 @@ from abc import ABC, abstractmethod
 
 import requests
 
+from .approve_id import get_domain_by_approve_id, save_approve_id
 from ..config import data_config
 from ..util import get_url, call_api_from_all, call_api_from_one
 
@@ -115,7 +116,11 @@ class Cache:
 
         for cache_proxy in HotCacheBase.__subclasses__():
             ins = cache_proxy()
-            data[ins.__class__.__name__] = cache_proxy().fetch_data()
+
+            name = ins.__class__.__name__
+            d = cache_proxy().fetch_data()
+
+            data[name] = d
 
         with self.lock:
             self.hot_cache = data
@@ -230,7 +235,8 @@ def create_approval(user_id, special_approver, title, apply_note):
         title: 审批标题
         apply_note: 审批内容
     """
-    user_contact = cache.get_user_contact(user_id)
+
+    special_approver_contact = cache.get_user_contact(special_approver)
 
     data = {
         "user_id": user_id,
@@ -240,24 +246,31 @@ def create_approval(user_id, special_approver, title, apply_note):
     }
 
     resp = call_api_from_one(
-        user_contact["domain"], "/api/job/to3part/v1/approval", "post", data=data
+        special_approver_contact["domain"],
+        "/api/job/to3part/v1/approval",
+        "post",
+        data=data,
     )
-    return json.loads(resp.text)["data"]
+    result = json.loads(resp.text)["data"]
+
+    # 保存单号和域名的对应关系
+    save_approve_id(result["djbh"], special_approver_contact["domain"])
+
+    return result
 
 
-def get_approval(user_id, djbh):
+def get_approval(djbh):
     """
     查询审批结果
 
     Args:
-        user_id: 工单发起人
         djbh: 工单编号
     """
-    user_contact = cache.get_user_contact(user_id)
+    domain = get_domain_by_approve_id(djbh)
 
     params = {"djbh": djbh}
 
     resp = call_api_from_one(
-        user_contact["domain"], "/api/job/to3part/v1/approval", "get", params=params
+        domain, "/api/job/to3part/v1/approval", "get", params=params
     )
     return json.loads(resp.text)["data"]
