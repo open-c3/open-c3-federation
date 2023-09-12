@@ -94,6 +94,7 @@ def lock_and_unlock(func):
     return wrapper
 
 
+@lock_and_unlock
 def get_domain_by_approve_id(approve_id):
     lines = read_file_lines()
 
@@ -105,6 +106,7 @@ def get_domain_by_approve_id(approve_id):
     raise RuntimeError("无法找到指定工单对应的c3域名")
 
 
+@lock_and_unlock
 def save_approve_id(approve_id, domain):
     lines = read_file_lines()
     lines.append(f"{approve_id} {domain}")
