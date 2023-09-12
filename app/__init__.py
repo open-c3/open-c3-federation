@@ -1,18 +1,21 @@
 #!/usr/bin/env /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
+import atexit
 import logging.config
+import threading
+import time
 from os import environ
 
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 
+from app.core.view.connector_views import connector_view
+from app.core.view.job_views import job_view
+from app.core.view.other_views import other_view
 from .config import app_config, data_config
 from .core.api import cache
-from .core.connector_views import connector_view
-from .core.job_views import job_view
-from .core.other_views import other_view
 
 
 def create_app():
@@ -27,6 +30,23 @@ def create_app():
     app.register_blueprint(connector_view, url_prefix="/api/connector")
     app.register_blueprint(job_view, url_prefix="/api/job")
     app.register_blueprint(other_view, url_prefix="/api/other")
+
+    def background_task():
+        while True:
+            print("更新缓存...")
+            cache.update_hot_cache()
+
+            time.sleep(data_config["cache_seconds"])
+
+    def stop_background_task():
+        global background_thread
+        background_thread.do_run = False
+
+    background_thread = threading.Thread(target=background_task)
+    background_thread.do_run = True
+    background_thread.start()
+    # 程序退出时停止缓存更新线程
+    atexit.register(stop_background_task)
 
     return app
 
