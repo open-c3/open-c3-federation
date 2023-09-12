@@ -21,4 +21,5 @@ PORT=$(python -c 'import json; print(json.load(open("config.json"))["port"])')
 
 docker run --restart=always -v /data/open-c3-federation/data/.env:/app/.env \
   -v /data/open-c3-federation/data/config.json:/app/config.json \
+  -v /data/open-c3-federation/data/approve_id.txt:/app/data/approve_id.txt \
   -p $PORT:$PORT -d --name open-c3-federation open-c3-federation:latest

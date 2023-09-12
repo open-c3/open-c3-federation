@@ -3,15 +3,10 @@ import shutil
 import time
 from functools import wraps
 
-# APPROVE_ID_PATH = "/app/data/approve_id.txt"
-# # 锁文件。用于防止多个进程同时读取文件内容并进行处理，后续会丢数据的问题
-# # 如果该文件存在则表示有进程正在读取文件内容，其他进程需要等待
-# APPROVE_ID_LOCK_PATH = "/app/data/approve_id.txt.lock"
-
-APPROVE_ID_PATH = "/tmp/approve_id.txt"
+APPROVE_ID_PATH = "/app/data/approve_id.txt"
 # 锁文件。用于防止多个进程同时读取文件内容并进行处理，后续会丢数据的问题
 # 如果该文件存在则表示有进程正在读取文件内容，其他进程需要等待
-APPROVE_ID_LOCK_PATH = "/tmp/approve_id.txt.lock"
+APPROVE_ID_LOCK_PATH = "/app/data/approve_id.txt.lock"
 
 
 def read_file_lines():
