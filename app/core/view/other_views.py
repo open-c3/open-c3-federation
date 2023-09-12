@@ -5,8 +5,8 @@ from flasgger import swag_from
 from flask import Blueprint, current_app
 from werkzeug.local import LocalProxy
 
-from .api import get_endpoint_list
-from .response import success_response
+from app.core.api import get_endpoint_list
+from app.core.response import success_response
 
 other_view = Blueprint("other", __name__)
 logger = LocalProxy(lambda: current_app.logger)

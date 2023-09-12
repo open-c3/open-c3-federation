@@ -6,8 +6,8 @@ from flask import Blueprint, current_app
 from flask import request
 from werkzeug.local import LocalProxy
 
-from .api import create_approval, get_approval
-from .response import success_response
+from app.core.api import create_approval, get_approval
+from app.core.response import success_response
 
 job_view = Blueprint("job", __name__)
 logger = LocalProxy(lambda: current_app.logger)
@@ -152,9 +152,6 @@ def create_approval_view():
     }
 )
 def get_approval_view():
-    user_id = request.args.get("user_id", "")
     djbh = request.args.get("djbh", "")
-
-    data = get_approval(user_id, djbh)
-
+    data = get_approval(djbh)
     return success_response(data)
