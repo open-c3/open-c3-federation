@@ -6,7 +6,7 @@ from flask import Blueprint, current_app
 from flask import request
 from werkzeug.local import LocalProxy
 
-from app.core.api import create_approval, get_approval
+from app.core.api.job import create_approval, get_approval
 from app.core.response import success_response
 
 job_view = Blueprint("job", __name__)

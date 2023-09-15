@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from flasgger import swag_from
-from flask import Blueprint, current_app
-from werkzeug.local import LocalProxy
+from flask import Blueprint
 
-from app.core.api import get_endpoint_list
+from app.core.api.other import get_endpoint_list
 from app.core.response import success_response
 
 other_view = Blueprint("other", __name__)
-logger = LocalProxy(lambda: current_app.logger)
 
 
 @other_view.route("/endpoints", methods=["GET"])

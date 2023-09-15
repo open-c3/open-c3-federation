@@ -3,15 +3,10 @@ import shutil
 import time
 from functools import wraps
 
-# APPROVE_ID_PATH = "/app/data/approve_id.txt"
-# # 锁文件。用于防止多个进程同时读取文件内容并进行处理，后续会丢数据的问题
-# # 如果该文件存在则表示有进程正在读取文件内容，其他进程需要等待
-# APPROVE_ID_LOCK_PATH = "/app/data/approve_id.txt.lock"
-
-APPROVE_ID_PATH = "/tmp/approve_id.txt"
+APPROVE_ID_PATH = "/app/data/approve_id.txt"
 # 锁文件。用于防止多个进程同时读取文件内容并进行处理，后续会丢数据的问题
 # 如果该文件存在则表示有进程正在读取文件内容，其他进程需要等待
-APPROVE_ID_LOCK_PATH = "/tmp/approve_id.txt.lock"
+APPROVE_ID_LOCK_PATH = "/app/data/approve_id.txt.lock"
 
 
 def read_file_lines():
@@ -99,6 +94,7 @@ def lock_and_unlock(func):
     return wrapper
 
 
+@lock_and_unlock
 def get_domain_by_approve_id(approve_id):
     lines = read_file_lines()
 
@@ -110,6 +106,7 @@ def get_domain_by_approve_id(approve_id):
     raise RuntimeError("无法找到指定工单对应的c3域名")
 
 
+@lock_and_unlock
 def save_approve_id(approve_id, domain):
     lines = read_file_lines()
     lines.append(f"{approve_id} {domain}")

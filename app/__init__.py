@@ -11,11 +11,11 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 
+from app.core.cache.cache_base import cache
 from app.core.view.connector_views import connector_view
 from app.core.view.job_views import job_view
 from app.core.view.other_views import other_view
 from .config import app_config, data_config
-from .core.api import cache
 
 
 def create_app():

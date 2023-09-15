@@ -5,7 +5,7 @@ from flasgger import swag_from
 from flask import Blueprint, current_app, request
 from werkzeug.local import LocalProxy
 
-from app.core.api import get_userinfo, get_department
+from app.core.api.connector import get_userinfo, get_department
 from app.core.response import error_response_400, success_response
 
 connector_view = Blueprint("connector", __name__)
