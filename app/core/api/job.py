@@ -1,11 +1,9 @@
 #!/usr/bin/env /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
-
-from app.core.approve_id import get_domain_by_approve_id, save_approve_id
-from app.util import call_api_from_one
-from ..cache.cache_api import get_user_contact
+from app.core.approve_id import *
+from app.util import *
+from ..cache.cache import *
 
 
 def create_approval(user_id, special_approver, title, apply_note):
@@ -28,12 +26,21 @@ def create_approval(user_id, special_approver, title, apply_note):
         "apply_note": apply_note,
     }
 
+    logger.debug(
+        f"create_approval. request. special_approver_contact: {json.dumps(special_approver_contact)}, data: {json.dumps(data)}"
+    )
+
     resp = call_api_from_one(
         special_approver_contact["domain"],
         "/api/job/to3part/v1/approval",
         "post",
         data=data,
     )
+
+    logger.debug(
+        f"create_approval. response. special_approver_contact: {json.dumps(special_approver_contact)}, data: {json.dumps(data)}, response: {resp.text}"
+    )
+
     result = json.loads(resp.text)["data"]
 
     # 保存单号和域名的对应关系
@@ -51,9 +58,15 @@ def get_approval(djbh):
     """
     domain = get_domain_by_approve_id(djbh)
 
+    if not domain:
+        raise RuntimeError("无法找到指定工单对应的c3域名")
+
     params = {"djbh": djbh}
 
     resp = call_api_from_one(
         domain, "/api/job/to3part/v1/approval", "get", params=params
     )
+
+    logger.debug(f"get_approval. response. djbh: {djbh}, response: {resp.text}")
+
     return json.loads(resp.text)["data"]

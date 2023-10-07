@@ -25,4 +25,8 @@ bash ./build.sh
 bash ./restart.sh
 ```
 
-上述命令将创建一个名为 `open-c3-federation` 的容器，该容器监听`config.json`端口。
+上述命令将创建一个名为 `open-c3-federation` 的容器，该容器监听`config.json`中配置的端口。
+
+# 文档地址
+
+http://x.x.x.x:57289/apidocs/#/

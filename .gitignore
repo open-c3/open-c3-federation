@@ -131,9 +131,7 @@ dmypy.json
 # project
 log/*
 .idea
-config.json
-
-
+config.json*
 #front
 logs
 *.log

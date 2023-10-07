@@ -4,8 +4,8 @@
 from flask import jsonify
 
 
-def success_response(data=None):
-    return jsonify({"code": 200, "data": data or {}}), 200
+def success_response(data):
+    return jsonify({"code": 200, "data": data}), 200
 
 
 def error_response_400(error_info):
@@ -14,3 +14,7 @@ def error_response_400(error_info):
 
 def error_response_500(error_info):
     return jsonify({"code": 500, "info": error_info}), 500
+
+
+def error_response_need_login(error_info):
+    return jsonify({"code": 10000, "info": error_info}), 400

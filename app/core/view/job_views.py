@@ -2,15 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from flasgger import swag_from
-from flask import Blueprint, current_app
+from flask import Blueprint
 from flask import request
-from werkzeug.local import LocalProxy
 
-from app.core.api.job import create_approval, get_approval
-from app.core.response import success_response
+from app.core.api.job import *
+from app.core.response import *
 
 job_view = Blueprint("job", __name__)
-logger = LocalProxy(lambda: current_app.logger)
 
 
 @job_view.route("/to3part/v1/approval", methods=["POST"])
@@ -80,15 +78,23 @@ logger = LocalProxy(lambda: current_app.logger)
     }
 )
 def create_approval_view():
-    data = request.json
-    user_id = data.get("user_id")
-    special_approver = data.get("special_approver")
-    title = data.get("title")
-    apply_note = data.get("apply_note")
+    try:
+        data = request.json
+        user_id = data.get("user_id")
+        special_approver = data.get("special_approver")
+        title = data.get("title")
+        apply_note = data.get("apply_note")
 
-    data = create_approval(user_id, special_approver, title, apply_note)
+        logger.debug(f"create_approval_view. request. data: {json.dumps(data)}")
 
-    return success_response(data)
+        resp = create_approval(user_id, special_approver, title, apply_note)
+
+        logger.debug(f"create_approval_view. response. data: {json.dumps(resp)}")
+
+        return success_response(resp)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
 
 
 @job_view.route("/to3part/v1/approval", methods=["GET"])
@@ -122,10 +128,10 @@ def create_approval_view():
                             "example": 200,
                             "description": "状态码",
                         },
-                        "data": {
+                        "resp": {
                             "type": "object",
                             "properties": {
-                                "data": {
+                                "resp": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
@@ -153,5 +159,14 @@ def create_approval_view():
 )
 def get_approval_view():
     djbh = request.args.get("djbh", "")
-    data = get_approval(djbh)
-    return success_response(data)
+
+    try:
+        resp = get_approval(djbh)
+        logger.debug(f"get_approval_view. djbh: {djbh}, resp: {json.dumps(resp)}")
+
+        return success_response(resp)
+    except Exception as e:
+        if "无法找到指定工单对应的c3域名" in str(e):
+            return error_response_500("无法找到指定工单对应的c3域名")
+
+        return error_response_500("服务端操作出现异常")

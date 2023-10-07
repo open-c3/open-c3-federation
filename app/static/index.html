@@ -1,140 +1,17 @@
-<html>
-
-<body>
-<style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-
-    .login {
-      background: #f63;
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      width: 100%;
-    }
-
-    .login-image {
-      padding: 20px 0;
-      text-align: center;
-    }
-
-    .login-address {
-      background: #f63;
-      margin: 33px auto 0;
-      padding: 0;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-
-    .li-items {
-      border-radius: 4px;
-      box-sizing: border-box;
-      background-color: #fff;
-      background-image: none;
-      border: 1px solid #dadce0;
-      color: #3c4043;
-      cursor: pointer;
-      font-size: 14px;
-      height: 40px;
-      letter-spacing: 0.25px;
-      outline: none;
-      overflow: hidden;
-      padding: 0 12px;
-      text-align: center;
-      white-space: nowrap;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-    }
-
-    .active {
-      display: flex;
-    }
-
-    .none {
-      display: none;
-    }
-</style>
-<div class="login">
-    <div class="login-image">
-        <img src="./open-c3-logo-v2.jpeg" width="234"/>
-    </div>
-
-    <div class="login-address">
-        <div style="margin-top: 67px;">请选择要跳转的平台</div>
-        <div class="platform-list" id="platform-list"></div>
-    </div>
-</div>
-</body>
-
-<script>
-    let menuArray = []
-    const fetchOrigin = window.location.origin;
-    const platformList = document.getElementById('platform-list');
-
-    const parseQueryParams = (urlString) => {
-      const params = {};
-      const queryStartIndex = urlString.indexOf('?');
-      if (queryStartIndex > -1) {
-        const queryString = urlString.slice(queryStartIndex + 1);
-        const pairs = queryString.split('&');
-        for (const pair of pairs) {
-          const [key, value] = pair.split('=');
-          params[decodeURIComponent(key)] = decodeURIComponent(value);
-        }
-      }
-      return params;
-    };
-
-    const handleJump = (info) => {
-      const locationSearch = parseQueryParams(window.location.href)
-      const selectItem = menuArray.find(item => item.name === info)
-      if (selectItem.callback) {
-        window.location.href = `${selectItem.callback}${locationSearch.callback ? locationSearch.callback : ''}`
-      } else {
-        window.location.href = selectItem.domain
-      }
-    };
-
-    const handleHtml = () => {
-      return alertHtml = `
-        <ul style="margin:0; padding:0">
-          ${menuArray.map(item => {
-        return `
-              <li class="li-items" style="margin: 20px 0;">
-                 <div onclick="handleJump('${item.name}')">登录${item.name}平台</div>
-              </li>
-            `
-      }).join('')}
-        </ul>
-      `
-    };
-
-    const getC3Link = () => {
-      // 请求C3地址
-      fetch(fetchOrigin + '/api/other/endpoints')
-        .then(function (response) {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error("Network response was not ok.");
-        })
-        .then(function (data) {
-          if (data.code === 200) {
-            menuArray = data.data
-            platformList.innerHTML = handleHtml();
-          }
-        })
-        .catch(function (error) {
-        });
-    };
-    getC3Link();
-</script>
-
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/static/assets/jpeg/open-c3-logo-ccb19d2b.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OPEN - C3</title>
+    <script type="module" crossorigin src="/static/assets/js/index-73d4e821.js"></script>
+    <link rel="modulepreload" crossorigin href="/static/assets/js/vendor-1fc3638c.js">
+    <link rel="stylesheet" href="/static/assets/css/vendor-b337bb83.css">
+    <link rel="stylesheet" href="/static/assets/css/index-b8626680.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    
+  </body>
 </html>

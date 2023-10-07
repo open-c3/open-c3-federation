@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-bash ./stop.sh
-bash ./start.sh
+bash /data/open-c3-federation/stop.sh
+bash /data/open-c3-federation/start.sh

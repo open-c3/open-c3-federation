@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import atexit
-import logging.config
 import threading
 import time
 from os import environ
@@ -11,10 +10,12 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 
-from app.core.cache.cache_base import cache
+from app.core.cache.cache import cache
+from app.core.view.agent_views import agent_view
 from app.core.view.connector_views import connector_view
+from app.core.view.federation_views import federation_view
 from app.core.view.job_views import job_view
-from app.core.view.other_views import other_view
+from app.core.view.tt_views import tt_view
 from .config import app_config, data_config
 
 
@@ -22,14 +23,16 @@ def create_app():
     # loading env vars from .env file
     load_dotenv()
     APPLICATION_ENV = get_environment()
-    logging.config.dictConfig(app_config[APPLICATION_ENV].LOGGING)
+    # logging.config.dictConfig(app_config[APPLICATION_ENV].LOGGING)
     app = Flask(app_config[APPLICATION_ENV].APP_NAME)
     CORS(app)
     app.config.from_object(app_config[APPLICATION_ENV])
 
     app.register_blueprint(connector_view, url_prefix="/api/connector")
     app.register_blueprint(job_view, url_prefix="/api/job")
-    app.register_blueprint(other_view, url_prefix="/api/other")
+    app.register_blueprint(agent_view, url_prefix="/api/agent")
+    app.register_blueprint(tt_view, url_prefix="/api/tt")
+    app.register_blueprint(federation_view, url_prefix="/api/federation")
 
     def background_task():
         while True:
