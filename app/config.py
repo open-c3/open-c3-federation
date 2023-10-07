@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 
 
 def load_config():
-    with open("config.json", "r") as f:
+    with open("config.yaml", "r") as f:
         return yaml.safe_load(f)
 
 

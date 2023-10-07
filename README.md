@@ -16,8 +16,8 @@ bash ./build.sh
 
 ### 启动容器
 
-请在项目根目录下创建 `data` 目录。该目录下需要包含两个文件 `.env` 和 `config.json`。请参考 `.env.example`
-和 `config.json.example` 来创建对应文件。
+请在项目根目录下创建 `data` 目录。该目录下需要包含两个文件 `.env` 和 `config.yaml`。请参考 `.env.example`
+和 `config.yaml.example` 来创建对应文件。
 
 创建完上述两个文件后，请执行该命令启动容器:
 
@@ -25,7 +25,7 @@ bash ./build.sh
 bash ./restart.sh
 ```
 
-上述命令将创建一个名为 `open-c3-federation` 的容器，该容器监听`config.json`中配置的端口。
+上述命令将创建一个名为 `open-c3-federation` 的容器，该容器监听`config.yaml`中配置的端口。
 
 # 文档地址
 

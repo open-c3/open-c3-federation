@@ -1,0 +1,25 @@
+---
+# 缓存刷新周期
+cache_seconds: 300
+# 日志级别
+log_level: TRACE
+# 服务监听端口
+port: 57289
+# c3端点列表
+open-c3-list:
+  - # appkey和appname用于调用c3接口
+    appkey: "1111111111222222333333333222222"
+    appname: "appname"
+
+    # 登录回调地址
+    callback: "http://aaa.domain.com?callback="
+
+    # c3域名
+    domain: "http://aaa.domain.com"
+    # c3名称，用于页面展示
+    name: "c3_name"
+
+    # 是否允许从页面登录。1: 允许，0: 不允许。
+    #
+    # 不管配置的是1还是0，联邦服务始终会从该c3获取数据进行集中展示
+    login: 1
