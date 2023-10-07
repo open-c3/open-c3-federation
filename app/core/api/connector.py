@@ -1,14 +1,8 @@
 #!/usr/bin/env /usr/local/bin/python3
 # -*- coding: utf-8 -*-
 
-import json
-import threading
-
-import requests
-
-from app.config import data_config
-from app.util import get_url, call_api_from_one
-from ..cache.cache_api import get_user_contact
+from app.util import *
+from ..cache.cache import *
 
 
 def get_userinfo(token):
@@ -17,11 +11,14 @@ def get_userinfo(token):
     Args:
         token: token
     """
+
     threads = []
     lock = threading.Lock()
 
     userinfo = None
     headers = {"token": token}
+
+    logger.debug(f"get_userinfo. request. token: {token}")
 
     def worker(config):
         url = get_url(config["domain"], "/api/connector/to3part/v1/user/userinfo")
@@ -44,6 +41,10 @@ def get_userinfo(token):
     for t in threads:
         t.join()
 
+    logger.debug(
+        f"get_userinfo. response. token: {token}, response: {json.dumps(userinfo)}"
+    )
+
     return userinfo
 
 
@@ -59,10 +60,31 @@ def get_department(email):
     if user_contact is None:
         return None
 
+    logger.debug(f"get_department. request. email: {email}")
+
     resp = call_api_from_one(
         user_contact["domain"],
         "/api/connector/to3part/v1/user/department",
         "get",
         params=params,
     )
+
+    logger.debug(f"get_department. response. email: {email}, response: {resp.text}")
+
     return json.loads(resp.text)["data"]
+
+
+def sso_logout():
+    """
+    退出登录
+    """
+    for c3_domain, c3_config in get_c3_config_dict().items():
+        params = {
+            "siteaddr": c3_domain,
+        }
+        call_api_from_one(
+            c3_domain,
+            "/api/connector/connectorx/approve/ssologout",
+            "get",
+            params=params,
+        )

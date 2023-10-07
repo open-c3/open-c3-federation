@@ -2,14 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from flasgger import swag_from
-from flask import Blueprint, current_app, request
-from werkzeug.local import LocalProxy
+from flask import Blueprint, request
 
-from app.core.api.connector import get_userinfo, get_department
-from app.core.response import error_response_400, success_response
+from app.core.api.connector import *
+from app.core.response import *
 
 connector_view = Blueprint("connector", __name__)
-logger = LocalProxy(lambda: current_app.logger)
 
 
 @connector_view.route("/to3part/v1/user/userinfo", methods=["GET"])
@@ -76,31 +74,113 @@ logger = LocalProxy(lambda: current_app.logger)
     }
 )
 def get_userinfo_view():
-    token = request.headers.get("token")
+    try:
+        token = request.headers.get("token")
 
-    if not token:
-        return error_response_400("请在header中传递token")
+        logger.debug(f"get_userinfo_view. token: {token}")
 
-    data = get_userinfo(token)
-    if data is None:
-        return error_response_400("无法根据指定token获取到用户信息")
+        if not token:
+            return error_response_400("请在header中传递token")
 
-    return success_response(data)
+        data = get_userinfo(token)
+        if data is None:
+            return error_response_400("无法根据指定token获取到用户信息")
+
+        logger.debug(f"get_userinfo_view. token: {token}, userinfo: {json.dumps(data)}")
+
+        return success_response(data)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
 
 
-@connector_view.route("/to3part/v1/user/department", methods=["GET"])
+@connector_view.route("/connectorx/sso/userinfo", methods=["GET"])
 @swag_from(
     {
         "tags": ["connector"],
-        "parameters": [
-            {
-                "name": "token",
-                "in": "header",
-                "type": "string",
-                "required": True,
-                "description": "用户的token",
-            }
-        ],
+        "description": "获取用户信息",
+        "responses": {
+            200: {
+                "description": "Successful response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "example": 200,
+                            "description": "状态码",
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "admin": {
+                                    "type": "string",
+                                    "example": "1",
+                                    "description": "是否为管理员",
+                                },
+                                "company": {
+                                    "type": "string",
+                                    "example": "ops",
+                                    "description": "公司名称",
+                                },
+                                "email": {
+                                    "type": "string",
+                                    "example": "wupeng@cmcm.com",
+                                    "description": "用户邮箱",
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "WUPENG",
+                                    "description": "用户名",
+                                },
+                                "showconnector": {
+                                    "type": "string",
+                                    "example": "1",
+                                    "description": "是否显示连接器",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            400: {
+                "description": "Bad Request. Failed to get the data due to invalid input.",
+            },
+        },
+    }
+)
+def get_userinfo_view_v2():
+    try:
+        logger.debug(f"get_userinfo_view_v2. cookies = {json.dumps(request.cookies)}")
+
+        token = ""
+        if "u" in request.cookies:
+            token = request.cookies.get("u")
+        elif "sid" in request.cookies:
+            token = request.cookies.get("sid")
+
+        if not token:
+            return error_response_need_login("没有传递有效cookie, 请重新登录")
+
+        logger.debug(f"get_userinfo_view_v2. token: {token}")
+
+        data = get_userinfo(token)
+        if data is None:
+            return error_response_need_login("无法根据指定token获取到用户信息")
+
+        logger.debug(f"get_userinfo_view. token: {token}, userinfo: {json.dumps(data)}")
+
+        return success_response(data)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
+
+
+@connector_view.route("/connectorx/sso/userinfo/department", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["connector"],
+        "description": "获取用户部门信息",
         "responses": {
             200: {
                 "description": "Successful response",
@@ -172,17 +252,65 @@ def get_userinfo_view():
     }
 )
 def get_department_view():
-    token = request.headers.get("token")
+    try:
+        token = ""
+        if "u" in request.cookies:
+            token = request.cookies.get("u")
+        elif "sid" in request.cookies:
+            token = request.cookies.get("sid")
 
-    if not token:
-        return error_response_400("请传递token")
+        if not token:
+            return error_response_need_login("没有传递有效cookie, 请重新登录")
 
-    user_info = get_userinfo(token)
-    if user_info is None:
-        return error_response_400("无法根据指定token获取到用户信息")
+        logger.debug(f"get_department_view. token: {token}")
 
-    department_info = get_department(user_info["email"])
-    if department_info is None:
-        return error_response_400("无法根据指定邮箱获取到部门信息, 请确认邮箱是否填写正确")
+        user_info = get_userinfo(token)
+        if user_info is None:
+            return error_response_need_login("无法根据指定token获取到用户信息")
 
-    return success_response(department_info)
+        department_info = get_department(user_info["email"])
+        if department_info is None:
+            return error_response_need_login("无法根据指定邮箱获取到部门信息, 请确认邮箱是否填写正确")
+
+        logger.debug(
+            f"get_department_view. token: {token}, department_info: {json.dumps(department_info)}"
+        )
+
+        return success_response(department_info)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
+
+
+@connector_view.route("/connectorx/approve/ssologout", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["connector"],
+        "description": "退出登录",
+        "responses": {
+            200: {
+                "description": "Successful response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "example": 200,
+                            "description": "状态码",
+                        },
+                    },
+                },
+            },
+            400: {
+                "description": "Bad Request. Failed to get the data due to invalid input.",
+            },
+        },
+    }
+)
+def sso_logout_view():
+    try:
+        sso_logout()
+        return success_response("成功退出登录!")
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
