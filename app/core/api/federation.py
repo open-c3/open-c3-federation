@@ -13,6 +13,8 @@ def get_endpoint_list():
         item = {
             "domain": c3_config["domain"],
             "name": c3_config["name"],
+            # 表示是否允许从该端点登录
+            "login": c3_config["login"],
         }
         if "callback" in c3_config:
             item["callback"] = c3_config["callback"]
