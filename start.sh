@@ -12,5 +12,7 @@ fi
 
 PORT=$(grep "^port:" config.yaml | awk '{print $2}')
 
+mkdir -p /data/open-c3-federation/data
+
 docker run --restart=always -v /data/open-c3-federation/:/app/ \
   -p "$PORT":"$PORT" -d --name open-c3-federation open-c3-federation:latest /app/entrypoint.sh
