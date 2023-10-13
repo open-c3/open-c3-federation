@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "skipLibCheck": false,
+    "skipLibCheck": true,
 
     /* 设置文件路径, 防止ts报错找不到路径异常 */
     "paths": {
