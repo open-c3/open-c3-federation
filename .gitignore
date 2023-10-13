@@ -146,6 +146,7 @@ dist
 dist.zip
 dist-ssr
 *.local
+CHANGELOG.md
 
 # Editor directories and files
 .vscode/*
