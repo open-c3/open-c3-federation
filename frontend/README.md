@@ -48,7 +48,6 @@
 |--tsconfig.json # ts 配置
 |--vite.config.ts # vite 配置
 |--package.json
-|--CHANGELOG.md # 构建日志
 |--.versionrc.cjs # 项目变更日志自定义配置
 |--.prettierrc.cjs # prettier文件自定义配置
 |--.eslintrc.cjs # Eslint自定义配置
