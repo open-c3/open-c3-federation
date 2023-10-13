@@ -1,5 +1,23 @@
 # 项目变更日志
 
+
+## 1.1.0 (2023-10-13)
+
+
+### ✨ Features | 新功能
+
+* **web:** 添加前端模块 ([20489ad](https://github.com/guo-zi-xin/open-c3-federation/commit/20489ada3351fc11ca40051cc18ef1db40ec87e6))
+
+
+### 💄 Styles | 风格样式
+
+* **login:** 修改登录C3按钮样式 ([91d4835](https://github.com/guo-zi-xin/open-c3-federation/commit/91d48354c4bbafb18acfc66a7ab36aecfda495a4))
+
+
+### 🐛 Bug Fix | Bug修复
+
+* **alert:** 告警页面分页问题修复 ([db7854c](https://github.com/guo-zi-xin/open-c3-federation/commit/db7854cd63970322d091459616e82eb3c8a89f7d))
+
 ### 0.0.2 (2023-09-13)
 
 ### 💄 Styles | 风格样式

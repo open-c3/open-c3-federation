@@ -8,7 +8,10 @@
 
 - pnpm `JS包管理工具`
 
-> 运行pnpm时 需要保证node版本在16.14.0以上
+> <span style="color:red">❗️注意：使用pnpm安装依赖需要Node版本 >=16.14.0 安装依赖前使用nvm安装对应Node版本</span>
+
+- nvm链接：[nvm](https://nvm.uihtm.com/)
+
 > `npm install -g pnpm`
 
 - vite `前端配置打包脚手架`
@@ -48,7 +51,6 @@
 |--tsconfig.json # ts 配置
 |--vite.config.ts # vite 配置
 |--package.json
-|--CHANGELOG.md # 构建日志
 |--.versionrc.cjs # 项目变更日志自定义配置
 |--.prettierrc.cjs # prettier文件自定义配置
 |--.eslintrc.cjs # Eslint自定义配置
@@ -77,3 +79,37 @@
 - 默认提交方式
 
 > `git commit - m 'feat(index):update'`
+
+## 生成日志
+
+- 添加了自动生成的CHANGELOG.md文件， 记录和更新提交的版本信息
+
+> 在打包构建完成后， 执行`pnpm release`会自动生成CHANGELOG.md文件
+
+## CSS相关
+
+关于css预编译器，该项目使用了less预处理器，通过类名变量进行渲染，具体使用方法为：
+
+```less
+// index.module.less文件中定义一个类名
+.index {
+ width:100%;
+ height:100%;
+}
+```
+
+在tsx文件中的引用
+
+```tsx
+import style from './index.module.less'
+
+const IndexPage: React.FC = () => {
+  return (
+    <>
+      <div className={style['index']}></div>
+    </d>
+  )
+}
+
+export default IndexPage
+```

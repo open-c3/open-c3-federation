@@ -5,6 +5,7 @@
 import umiRequest, { extend } from 'umi-request';
 import { notification, message } from 'antd';
 import { urlPrefix } from '../config';
+import {parseQueryParams} from '@/utils/index'
 
 export const codeMessage = {
     200: '请求成功',
@@ -100,7 +101,7 @@ whyRequest.interceptors.response.use(async (response): Promise<any> => {
                     message: codeMessage[data.code]
                 });
                 isErrorNotificationShow = true;
-                if (data.code === 10000) window.location.href = `/#/login?callback=${window.location.href}`;
+                if (data.code === 10000) window.location.href = parseQueryParams(window.location.href).callback ? window.location.href: `/#/login?callback=${window.location.href}`;
             }
         }
         if (data && data.info === 'Unauthorized') {
