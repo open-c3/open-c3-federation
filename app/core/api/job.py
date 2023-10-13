@@ -19,6 +19,10 @@ def create_approval(user_id, special_approver, title, apply_note):
 
     special_approver_contact = get_user_contact(special_approver)
 
+    # 如果不是同一个邮箱类型，则使用sys@app作为审批发起人，避免出现跨公司审批错误
+    if not compare_emails(user_id, special_approver):
+        user_id = "sys@app"
+
     data = {
         "user_id": user_id,
         "special_approver": special_approver,
