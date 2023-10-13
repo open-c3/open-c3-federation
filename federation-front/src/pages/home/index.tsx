@@ -4,7 +4,7 @@ import { Layout, Menu, Image, Dropdown, message } from 'antd';
 import { AlertOutlined, DownOutlined, LogoutOutlined } from '@ant-design/icons';
 
 // import { formatMessage } from '@/components/locales';
-import { clearAllCookies } from '@/utils/index';
+import { clearAllCookies, parseQueryParams } from '@/utils/index';
 
 import { getUseInfo } from '@/api/index';
 import { getLogout } from '@/api/login';
@@ -60,8 +60,10 @@ const HomePage: React.FC = ({ children }) => {
         if (code === 200) {
             message.success(data || '退出成功！');
             clearAllCookies();
-            history.push(`/login?callback=${window.location.href}`);
-            // window.location.href = `/static/index.html/#/login?callback=${window.location.href}`
+            if (!parseQueryParams(window.location.href).callback) {
+              history.push(`/login?callback=${window.location.href}`);
+              return;
+          }
         }
     };
 
