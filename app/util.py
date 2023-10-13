@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import concurrent.futures
+import re
 from urllib.parse import urljoin
 
 import requests
@@ -115,3 +116,18 @@ def merge_list_of_list(data_list):
     将二维列表展开为一维
     """
     return [item for subList in data_list for item in subList]
+
+
+def is_valid_email(email):
+    email_pattern = re.compile(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    return bool(re.match(email_pattern, email))
+
+
+def compare_emails(account1, account2):
+    """
+    判断邮箱后缀是否相同
+    """
+    if is_valid_email(account1) and is_valid_email(account2):
+        return account1.lower() == account2.lower()  # 不区分大小写比较
+    else:
+        return False
