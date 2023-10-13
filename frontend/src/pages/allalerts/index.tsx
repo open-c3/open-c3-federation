@@ -45,10 +45,7 @@ const AlertPage: React.FC = () => {
         });
         if (dataRet) {
             const { data } = dataRet;
-            setPagination({
-                ...pagination,
-                total: data?.length || 0
-            });
+            setPagination({...pagination});
             setAlertData(data || []);
             setSelectedRowKeys([]);
         }
@@ -327,7 +324,6 @@ const AlertPage: React.FC = () => {
         { title: '资源别名', key: 'alias', dataIndex: 'alias', width: 110, align: 'center' },
         {
             title: '状态',
-            key: 'state',
             dataIndex: ['status', 'state'],
             width: 100,
             align: 'center',
@@ -413,18 +409,8 @@ const AlertPage: React.FC = () => {
         selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT, Table.SELECTION_NONE]
     };
 
-    const handleChange = (pagination, filter) => {
-        const filterData = JSON.parse(JSON.stringify(alertData));
-        let newData = [];
-        for (const key in filter) {
-            newData = filterData.filter((item) => {
-                return filter[key] && filter[key].length > 0 ? filter[key].includes(item[key]) : true;
-            });
-        }
-        setPagination({
-            ...pagination,
-            total: newData?.length || 0
-        });
+    const handleChange = (pagination) => {
+        setPagination({...pagination});
     };
 
     return (
