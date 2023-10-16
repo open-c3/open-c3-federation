@@ -48,6 +48,39 @@ def get_userinfo(token):
     return userinfo
 
 
+def get_userleader(email):
+    """
+    查询用户领导列表 (索引越大，领导级别越高)
+    """
+    params = {"user": email}
+
+    user_contact = get_user_contact(email)
+    if user_contact is None:
+        return None
+
+    logger.debug(f"get_userleader. request. email: {email}")
+
+    resp = call_api_from_one(
+        user_contact["domain"],
+        "/api/ci/c3mc/base/userleader",
+        "get",
+        params=params,
+    )
+
+    logger.debug(f"get_userleader. response. email: {email}, response: {resp.text}")
+
+    data = json.loads(resp.text)["data"]
+
+    sorted_keys = sorted(data.keys())
+
+    result = []
+
+    for key in sorted_keys:
+        result.append(data[key])
+
+    return result
+
+
 def get_department(email):
     """
     查询用户部门信息
