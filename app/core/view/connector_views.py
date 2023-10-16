@@ -314,3 +314,56 @@ def sso_logout_view():
     except Exception as e:
         logger.exception(e)
         return error_response_500("服务端操作出现异常")
+
+
+@connector_view.route("/base/userleader", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["connector"],
+        "description": "获取用户领导",
+        "responses": {
+            200: {
+                "description": "Successful response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "example": 200,
+                            "description": "状态码",
+                        },
+                    },
+                },
+            },
+        },
+    }
+)
+def get_userleader_view():
+    try:
+        token = ""
+        if "u" in request.cookies:
+            token = request.cookies.get("u")
+        elif "sid" in request.cookies:
+            token = request.cookies.get("sid")
+
+        if not token:
+            return error_response_need_login("没有传递有效cookie, 请重新登录")
+
+        logger.debug(f"get_department_view. token: {token}")
+
+        user_info = get_userinfo(token)
+        if user_info is None:
+            return error_response_need_login("无法根据指定token获取到用户信息")
+
+        user_leader_list = get_userleader(user_info["email"])
+        if not user_leader_list:
+            return error_response_need_login("无法根据指定邮箱获取到用户领导, 请确认邮箱是否填写正确")
+
+        logger.debug(
+            f"get_userleader_view. token: {token}, 用户领导列表: {json.dumps(user_leader_list)}"
+        )
+
+        return success_response(user_leader_list)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
