@@ -282,6 +282,111 @@ def get_department_view():
         return error_response_500("服务端操作出现异常")
 
 
+@connector_view.route("/connectorx/sso/userinfo/department_v2", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["connector"],
+        "description": "获取用户部门信息",
+        "parameters": [
+            {
+                "name": "email",
+                "in": "query",
+                "type": "string",
+                "required": True,
+                "description": "用户邮箱地址",
+            },
+        ],
+        "responses": {
+            200: {
+                "description": "Successful response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "example": 200,
+                            "description": "状态码",
+                        },
+                        "data": {
+                            "type": "object",
+                            "properties": {
+                                "accountId": {
+                                    "type": "string",
+                                    "example": "zhangsan@email.com",
+                                    "description": "账户ID",
+                                },
+                                "accountName": {
+                                    "type": "string",
+                                    "example": "张三",
+                                    "description": "账户名称",
+                                },
+                                "mobile": {
+                                    "type": "string",
+                                    "example": "18788888888",
+                                    "description": "手机号",
+                                },
+                                "oneDeptName": {
+                                    "type": "string",
+                                    "example": "云平台",
+                                    "description": "一级部门名称",
+                                },
+                                "oneLeaderId": {
+                                    "type": "string",
+                                    "example": "lisi@email.com",
+                                    "description": "一级领导ID",
+                                },
+                                "sybDeptName": {
+                                    "type": "string",
+                                    "example": "运维部",
+                                    "description": "子部门名称",
+                                },
+                                "sybLeaderId": {
+                                    "type": "string",
+                                    "example": "wangmazi@email.com",
+                                    "description": "子部门领导ID",
+                                },
+                                "twoDeptName": {
+                                    "type": "string",
+                                    "example": "工具部",
+                                    "description": "二级部门名称",
+                                },
+                                "twoLeaderId": {
+                                    "type": "string",
+                                    "example": "kongzi@email.com",
+                                    "description": "二级领导ID",
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            400: {
+                "description": "Bad Request. Failed to get the data due to invalid input.",
+            },
+        },
+    }
+)
+def get_department_view_v2():
+    try:
+        email = request.args.get("email")
+
+        if not email:
+            return error_response_need_login("请传递email参数")
+
+        department_info = get_department(email)
+        if department_info is None:
+            return error_response_need_login("无法根据指定邮箱获取到部门信息, 请确认邮箱是否填写正确")
+
+        logger.debug(
+            f"get_department_view. token: {email}, department_info: {json.dumps(department_info)}"
+        )
+
+        return success_response(department_info)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
+
+
 @connector_view.route("/connectorx/approve/ssologout", methods=["GET"])
 @swag_from(
     {
@@ -361,6 +466,58 @@ def get_userleader_view():
 
         logger.debug(
             f"get_userleader_view. token: {token}, 用户领导列表: {json.dumps(user_leader_list)}"
+        )
+
+        return success_response(user_leader_list)
+    except Exception as e:
+        logger.exception(e)
+        return error_response_500("服务端操作出现异常")
+
+
+@connector_view.route("/base/userleader_v2", methods=["GET"])
+@swag_from(
+    {
+        "tags": ["connector"],
+        "description": "获取用户领导",
+        "parameters": [
+            {
+                "name": "email",
+                "in": "query",
+                "type": "string",
+                "required": True,
+                "description": "用户邮箱地址",
+            },
+        ],
+        "responses": {
+            200: {
+                "description": "Successful response",
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "integer",
+                            "example": 200,
+                            "description": "状态码",
+                        },
+                    },
+                },
+            },
+        },
+    }
+)
+def get_userleader_view_v2():
+    try:
+        email = request.args.get("email")
+
+        if not email:
+            return error_response_need_login("请传递email参数")
+
+        user_leader_list = get_userleader(email)
+        if not user_leader_list:
+            return error_response_need_login("无法根据指定邮箱获取到用户领导, 请确认邮箱是否填写正确")
+
+        logger.debug(
+            f"get_userleader_view. token: {email}, 用户领导列表: {json.dumps(user_leader_list)}"
         )
 
         return success_response(user_leader_list)
